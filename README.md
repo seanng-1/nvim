@@ -12,6 +12,23 @@ A starting point for Neovim that is:
 
 ## Installation
 
+### Install Nerdfont / icons
+```
+In Linux, you do:
+
+Download (any) Nerdfont.
+
+Extract.
+
+put the extracted folder into /usr/.local/share/fonts if you want them to be installed only to your user, or /usr/share/fonts if you want them installed globally.
+
+Rebuild font cache by running fc-cache -f -v
+
+Now if you open preferences in your terminal, you should be able to select the font you just installed.
+
+That should be it. For terminal emulators like alacritty, you need to specify fonts in the alacritty.toml file
+```
+
 ### Install Neovim
 
 Kickstart.nvim targets *only* the latest
