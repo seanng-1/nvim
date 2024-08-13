@@ -16,6 +16,8 @@ Add nvim to the path: <br>
 `export PATH=$PATH:/opt/nvim-linux64/bin` <br>
 Allow building CMake, ROS stuff etc. <br>
 `export COLCON_EXTRA_ARGS="--cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"` <br>
+For use with normal colcon building e.g. <br> 
+`colcon build --merge-install --symlink-install --packages-ignore-rexex <pkgs> $COLCON_EXTRA_ARGS`
 
 ## Installation
 
