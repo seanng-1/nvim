@@ -444,6 +444,9 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [/] in Open Files' })
 
+      -- NOTE: custom remap for using ROS2 lsp
+      vim.keymap.set('n', '<leader>st', ':Telescope ros2 topics_info<CR>', { noremap = true, silent = true })
+
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
