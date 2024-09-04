@@ -291,6 +291,21 @@ require('lazy').setup({
     'mg979/vim-visual-multi',
   },
 
+  { -- NOTE: ROS2 LSP for messages etc.
+    'ErickKramer/nvim-ros2',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    opts = {
+      -- Add any custom options here
+      autocmds = true,
+      telescope = true,
+      treesitter = true,
+    },
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
