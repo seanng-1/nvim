@@ -447,6 +447,9 @@ require('lazy').setup({
       -- NOTE: custom remap for using ROS2 lsp
       vim.keymap.set('n', '<leader>st', ':Telescope ros2 topics_info<CR>', { noremap = true, silent = true })
 
+      -- NOTE: custom remap for instantly swapping between header and source files using clangd
+      vim.keymap.set('n', '<leader>o', ':ClangdSwitchSourceHeader<CR>', { desc = 'Swap between header and source file buffers' })
+
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
