@@ -450,6 +450,14 @@ require('lazy').setup({
       -- NOTE: custom remap for instantly swapping between header and source files using clangd
       vim.keymap.set('n', '<leader>o', ':ClangdSwitchSourceHeader<CR>', { desc = 'Swap between header and source file buffers' })
 
+      --NOTE: custom function to set up indenting with 2 spaces
+      vim.api.nvim_create_user_command('Indent', function()
+        vim.opt.autoindent = true
+        vim.opt.expandtab = true
+        vim.opt.tabstop = 2
+        vim.opt.shiftwidth = 2
+      end, {})
+
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
