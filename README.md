@@ -10,6 +10,12 @@ A starting point for Neovim that is:
 
 **NOT** a Neovim distribution, but instead a starting point for your configuration.
 
+## Quick-Install
+`git clone https://github.com/seanng-1/nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim`
+`cd ~/.config/nvim/`
+`./install_from_source.sh`
+-------------------------------------------------------------------------------------------
+
 **NOTE** <br>
 Can add the following to ~/.bashrc <br>
 Add nvim to the path: <br>
