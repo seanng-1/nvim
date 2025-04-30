@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e  # Exit on any error
+set -e
 
 echo "==> Installing dependencies..."
 sudo apt update
@@ -20,7 +20,7 @@ make CMAKE_BUILD_TYPE=Release
 echo "==> Installing Neovim..."
 sudo make install
 
-# Optional: If you have a custom install path like /opt/nvim-linux64/bin, export that too.
+# add nvim to the path
 CUSTOM_NVIM_PATH="/opt/nvim-linux64/bin"
 
 if ! grep -q "$CUSTOM_NVIM_PATH" "$HOME/.bashrc"; then
@@ -35,5 +35,5 @@ fi
 echo "==> Sourcing ~/.bashrc to apply changes..."
 source "$HOME/.bashrc"
 
-echo "✅ Neovim installation complete."
+echo "😈😈 Neovim installation complete. 😈😈"
 
