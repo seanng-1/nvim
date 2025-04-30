@@ -4,7 +4,7 @@ set -e
 
 echo "==> Installing dependencies..."
 sudo apt update
-sudo apt install -y ninja-build gettext cmake unzip curl build-essential xclip
+sudo apt install -y ninja-build gettext cmake unzip curl build-essential xclip clangd
 
 echo "==> Cloning Neovim source into ~/.neovim..."
 if [ -d "$HOME/.neovim" ]; then
