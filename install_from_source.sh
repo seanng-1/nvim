@@ -6,6 +6,9 @@ echo "==> Installing dependencies..."
 sudo apt update
 sudo apt install -y ninja-build gettext cmake unzip curl build-essential xclip clangd ripgrep
 
+# install ruff
+curl -LsSf https://astral.sh/ruff/install.sh | sh
+
 echo "==> Cloning Neovim source into ~/.neovim..."
 if [ -d "$HOME/.neovim" ]; then
   echo "   - Directory ~/.neovim already exists. Skipping clone."
@@ -20,16 +23,16 @@ make CMAKE_BUILD_TYPE=Release
 echo "==> Installing Neovim..."
 sudo make install
 
-# add nvim to the path
-CUSTOM_NVIM_PATH="/opt/nvim-linux64/bin"
+# add custom paths e.g. ruff and neovim location
+PATHS_TO_ADD="$HOME/.local/bin:/opt/nvim-linux64/bin"
 
-if ! grep -q "$CUSTOM_NVIM_PATH" "$HOME/.bashrc"; then
-  echo "==> Adding Neovim path to ~/.bashrc..."
+if ! grep -q "$PATHS_TO_ADD" "$HOME/.bashrc"; then
+  echo "==> Adding Ruff and Neovim paths to ~/.bashrc..."
   echo "" >> "$HOME/.bashrc"
-  echo "# Add custom Neovim path" >> "$HOME/.bashrc"
-  echo "export PATH=\"\$PATH:$CUSTOM_NVIM_PATH\"" >> "$HOME/.bashrc"
+  echo "# Add Ruff and custom Neovim to PATH" >> "$HOME/.bashrc"
+  echo "export PATH=\"$PATHS_TO_ADD:\$PATH\"" >> "$HOME/.bashrc"
 else
-  echo "==> Neovim path already in ~/.bashrc. Skipping."
+  echo "==> Ruff and Neovim paths already in ~/.bashrc. Skipping."
 fi
 
 echo "==> Sourcing ~/.bashrc to apply changes..."
