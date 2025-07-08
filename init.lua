@@ -469,6 +469,71 @@ require('lazy').setup({
       -- NOTE: custom remap for instantly swapping between header and source files using clangd
       vim.keymap.set('n', '<leader>o', ':ClangdSwitchSourceHeader<CR>', { desc = 'Swap between header and source file buffers' })
 
+      --NOTE: custom function for vertical diff
+      local function vertical_staged_diff()
+        -- Get absolute path of current file
+        local abs_path = vim.fn.expand '%:p'
+        if abs_path == '' then
+          print 'No file detected in current buffer'
+          return
+        end
+
+        -- Get git root directory
+        local git_root = vim.fn.systemlist('git rev-parse --show-toplevel')[1]
+        if not git_root or git_root == '' then
+          print 'Not inside a git repository'
+          return
+        end
+
+        -- Compute path relative to git root
+        local rel_path = vim.fn.fnamemodify(abs_path, ':.' .. git_root .. '/')
+
+        -- Save current window id to return later
+        local current_win = vim.api.nvim_get_current_win()
+
+        -- Open vertical split and create new empty buffer for staged content
+        vim.cmd 'vsplit'
+        vim.cmd 'enew'
+
+        -- Load staged file contents into this buffer
+        local staged_contents = vim.fn.systemlist('git show :' .. vim.fn.shellescape(rel_path))
+        if vim.v.shell_error ~= 0 then
+          print('Failed to load staged file: ' .. rel_path)
+          vim.cmd 'bd!' -- close staged buffer
+          vim.api.nvim_set_current_win(current_win)
+          return
+        end
+
+        -- Set buffer lines to staged contents
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, staged_contents)
+
+        -- Set staged buffer options
+        local buf = vim.api.nvim_get_current_buf()
+        vim.bo[buf].buftype = 'nofile'
+        vim.bo[buf].bufhidden = 'wipe'
+        vim.bo[buf].swapfile = false
+        vim.bo[buf].modifiable = false
+        vim.bo[buf].readonly = true
+
+        -- Name the buffer to reflect staged file
+        vim.cmd('file ' .. rel_path .. ' (staged)')
+
+        -- Enable diff mode in staged buffer window
+        vim.cmd 'diffthis'
+
+        -- Go back to original buffer/window and enable diff mode
+        vim.api.nvim_set_current_win(current_win)
+        vim.cmd 'diffthis'
+      end
+
+      --NOTE: custom user command for convenience
+      vim.api.nvim_create_user_command('GitsignsVerticalDiff', vertical_staged_diff, {
+        desc = 'Open vertical diff split between working and staged version of current file',
+      })
+
+      --NOTE: custom keymap to trigger vertical diff
+      vim.keymap.set('n', '<leader>gd', ':GitsignsVerticalDiff<CR>', { desc = 'Vertical staged vs working diff' })
+
       --NOTE: custom function to set up indenting with 2 spaces
       vim.api.nvim_create_user_command('Indent', function()
         vim.opt.autoindent = true
