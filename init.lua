@@ -467,7 +467,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>st', ':Telescope ros2 topics_info<CR>', { noremap = true, silent = true })
 
       -- NOTE: custom remap for instantly swapping between header and source files using clangd
-      vim.keymap.set('n', '<leader>o', ':ClangdSwitchSourceHeader<CR>', { desc = 'Swap between header and source file buffers' })
+      require('lspconfig').clangd.setup {
+        on_attach = function(client, bufnr)
+          vim.keymap.set('n', '<leader>o', ':ClangdSwitchSourceHeader<CR>', { buffer = bufnr, desc = 'Swap between header and source file buffers' })
+        end,
+      }
 
       --NOTE: custom function for vertical diff
       local function vertical_staged_diff()
