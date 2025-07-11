@@ -478,15 +478,20 @@ require('lazy').setup({
           return
         end
 
-        -- Get git root directory
-        local git_root = vim.fn.systemlist('git rev-parse --show-toplevel')[1]
+        -- Get git root directory for the current file (handles submodules)
+        local git_root = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(vim.fn.fnamemodify(abs_path, ':h')) .. ' rev-parse --show-toplevel')[1]
         if not git_root or git_root == '' then
           print 'Not inside a git repository'
           return
         end
 
         -- Compute path relative to git root
-        local rel_path = vim.fn.fnamemodify(abs_path, ':.' .. git_root .. '/')
+        local rel_path = vim.fn.fnamemodify(abs_path, ':~:.')
+        if vim.fn.stridx(abs_path, git_root) == 0 then
+          rel_path = abs_path:sub(#git_root + 2)
+        else
+          rel_path = vim.fn.fnamemodify(abs_path, ':~:.')
+        end
 
         -- Save current window id to return later
         local current_win = vim.api.nvim_get_current_win()
@@ -496,7 +501,7 @@ require('lazy').setup({
         vim.cmd 'enew'
 
         -- Load staged file contents into this buffer
-        local staged_contents = vim.fn.systemlist('git show :' .. vim.fn.shellescape(rel_path))
+        local staged_contents = vim.fn.systemlist('git -C ' .. vim.fn.shellescape(git_root) .. ' show :' .. vim.fn.shellescape(rel_path))
         if vim.v.shell_error ~= 0 then
           print('Failed to load staged file: ' .. rel_path)
           vim.cmd 'bd!' -- close staged buffer
