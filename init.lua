@@ -169,10 +169,10 @@ require('lazy').setup({
     {
       'CopilotC-Nvim/CopilotChat.nvim',
       dependencies = {
-        { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
+        { 'github/copilot.vim' },                       -- or zbirenbaum/copilot.lua
         { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log and async functions
       },
-      build = 'make tiktoken', -- Only on MacOS or Linux
+      build = 'make tiktoken',                          -- Only on MacOS or Linux
       opts = {
         -- See Configuration section for options
       },
@@ -190,9 +190,9 @@ require('lazy').setup({
     event = 'VimEnter',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make', cond = vim.fn.executable('make') == 1 },
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make',                cond = vim.fn.executable('make') == 1 },
       'nvim-telescope/telescope-ui-select.nvim',
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons',              enabled = vim.g.have_nerd_font },
     },
     config = function()
       local telescope = require('telescope')
@@ -223,70 +223,26 @@ require('lazy').setup({
   ------------------------------------------------
   {
     'neovim/nvim-lspconfig',
+    commit = '702f69fb167e9119f14adc4dfd4fcadf4d1b07a0',
     dependencies = {
-      { 'williamboman/mason.nvim', config = true },
-      'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
-      local capabilities = vim.tbl_deep_extend(
-        'force',
-        vim.lsp.protocol.make_client_capabilities(),
-        require('cmp_nvim_lsp').default_capabilities()
-      )
-
-      vim.api.nvim_create_autocmd('LspAttach', {
-        callback = function(ev)
-          local buf = ev.buf
-          local client = vim.lsp.get_client_by_id(ev.data.client_id)
-
-          local function lspmap(lhs, rhs, desc)
-            map('n', lhs, rhs, { buffer = buf, desc = desc })
-          end
-
-          lspmap('gd', vim.lsp.buf.definition, 'Go to definition')
-          lspmap('gr', vim.lsp.buf.references, 'References')
-          lspmap('<leader>rn', vim.lsp.buf.rename, 'Rename')
-          lspmap('<leader>ca', vim.lsp.buf.code_action, 'Code action')
-
-          if client and client.supports_method('textDocument/inlayHint') then
-            lspmap('<leader>th', function()
-              vim.lsp.inlay_hint.enable(buf, not vim.lsp.inlay_hint.is_enabled(buf))
-            end, 'Toggle inlay hints')
-          end
-
-          if client and client.name == 'ruff' then
-            client.server_capabilities.hoverProvider = false
-          end
-        end,
+      vim.lsp.config('clangd', {
+        cmd = {
+          "/usr/bin/clangd",
+          "--background-index",
+          "--header-insertion=never",
+          "--offset-encoding=utf-16",
+        },
+        filetypes = { "c", "cpp", "objc", "objcpp" },
+        root_markers = { "compile_commands.json", "package.xml", ".git" },
       })
 
-      local servers = {
-        clangd = {},
-        pyright = {},
-        rust_analyzer = {},
-        lua_ls = {
-          settings = {
-            Lua = { completion = { callSnippet = 'Replace' } },
-          },
-        },
-      }
-
-      require('mason-tool-installer').setup {
-        ensure_installed = vim.tbl_keys(servers),
-      }
-
-      require('mason-lspconfig').setup {
-        handlers = {
-          function(name)
-            require('lspconfig')[name].setup {
-              capabilities = capabilities,
-              settings = servers[name] and servers[name].settings,
-            }
-          end,
-        },
-      }
+      -- This is the new way to 'setup' a server in nvim-lspconfig 0.11+
+      vim.lsp.enable('clangd', {
+        capabilities = require('cmp_nvim_lsp').default_capabilities(),
+      })
     end,
   },
 
