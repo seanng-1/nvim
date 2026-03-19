@@ -243,6 +243,33 @@ require('lazy').setup({
       vim.lsp.enable('clangd', {
         capabilities = require('cmp_nvim_lsp').default_capabilities(),
       })
+
+      -- other servers
+      local servers = {
+        pyright = {},
+        rust_analyzer = {},
+        lua_ls = { settings = { Lua = { completion = { callSnippet = "Replace" } } } },
+      }
+
+      for name, opts in pairs(servers) do
+        vim.lsp.config(name, opts)
+        vim.lsp.enable(name, { capabilities = capabilities })
+      end
+
+      -- optional: LspAttach keymaps
+      vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(ev)
+          local buf = ev.buf
+          local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          local function lspmap(lhs, rhs, desc)
+            vim.keymap.set('n', lhs, rhs, { buffer = buf, desc = desc })
+          end
+          lspmap('gd', vim.lsp.buf.definition, 'Go to definition')
+          lspmap('gr', vim.lsp.buf.references, 'References')
+          lspmap('<leader>rn', vim.lsp.buf.rename, 'Rename')
+          lspmap('<leader>ca', vim.lsp.buf.code_action, 'Code action')
+        end,
+      })
     end,
   },
 
