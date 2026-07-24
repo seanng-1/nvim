@@ -27,6 +27,8 @@ fi
 
 echo "==> Building Neovim from source..."
 cd "$HOME/.neovim"
+git fetch --tags
+git checkout v0.10.4
 make CMAKE_BUILD_TYPE=Release
 
 echo "==> Installing Neovim..."
